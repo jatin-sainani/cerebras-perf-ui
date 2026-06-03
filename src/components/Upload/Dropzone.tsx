@@ -30,28 +30,32 @@ export function Dropzone() {
   });
 
   return (
-    <div
-      {...getRootProps()}
-      className={clsx(
-        'cursor-pointer rounded-xl border-2 border-dashed px-4 py-6 text-center transition',
-        isDragActive ? 'border-brand-500 bg-brand-50' : 'border-ink-300 bg-white hover:border-brand-400',
-      )}
-    >
-      {/* webkitdirectory lets a user drop/select an entire unzipped sweep folder */}
-      <input {...getInputProps()} />
-      <div className="text-sm font-medium text-ink-700">
-        {parsing ? 'Parsing…' : isDragActive ? 'Drop the .xlsx sweeps' : 'Drop perf sweeps here'}
+    <div>
+      <div
+        {...getRootProps()}
+        className={clsx(
+          'cursor-pointer rounded-xl border-2 border-dashed px-4 py-6 text-center transition',
+          isDragActive ? 'border-brand-500 bg-brand-50' : 'border-ink-300 bg-white hover:border-brand-400',
+        )}
+      >
+        <input {...getInputProps()} />
+        <div className="text-sm font-medium text-ink-700">
+          {parsing ? 'Parsing…' : isDragActive ? 'Drop the .xlsx sweeps' : 'Drop perf sweeps here'}
+        </div>
+        <div className="mt-1 text-xs text-ink-500">
+          One or many <code className="rounded bg-ink-100 px-1">.xlsx</code> files. Parsed in your browser — nothing is uploaded.
+        </div>
       </div>
-      <div className="mt-1 text-xs text-ink-500">
-        One or many <code className="rounded bg-ink-100 px-1">.xlsx</code> files. Parsed in your browser — nothing is uploaded.
-      </div>
+      {/*
+        The folder picker lives OUTSIDE the dropzone root: react-dropzone composes its
+        open-dialog handler off defaultPrevented (not propagation), so nesting this button
+        inside the root opened both the folder picker and the file picker.
+        webkitdirectory lets a user select an entire unzipped sweep folder.
+      */}
       <button
         type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          folderRef.current?.click();
-        }}
-        className="mt-3 text-xs font-medium text-brand-600 underline-offset-2 hover:underline"
+        onClick={() => folderRef.current?.click()}
+        className="mt-2 block w-full text-center text-xs font-medium text-brand-600 underline-offset-2 hover:underline"
       >
         …or pick an entire sweep folder
       </button>

@@ -46,7 +46,7 @@ export function TradeoffScatter({ sweeps, axis, height = 280 }: { sweeps: Parsed
           labelFormatter={() => ''}
           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
         />
-        <Legend wrapperStyle={{ fontSize: 11 }} />
+        <Legend verticalAlign="top" align="center" wrapperStyle={{ fontSize: 11 }} />
         {sweeps.map((s, i) => (
           <Scatter
             key={s.id}

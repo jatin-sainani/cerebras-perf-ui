@@ -46,7 +46,7 @@ export function OverlayChart({ sweeps, metric, axis, logScale, height = 240 }: P
           labelFormatter={(l) => `Batch ${l}`}
           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
         />
-        <Legend wrapperStyle={{ fontSize: 11 }} formatter={(name) => labelFor(sweeps, name, axis)} />
+        <Legend verticalAlign="top" align="center" wrapperStyle={{ fontSize: 11 }} formatter={(name) => labelFor(sweeps, name, axis)} />
         {sweeps.map((s, i) => (
           <Line
             key={s.id}

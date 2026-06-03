@@ -1,6 +1,6 @@
 # Perf Sweep Explorer
 
-**Live URL:** _<paste your Vercel/Netlify URL here>_ ← required; also paste into the submission form.
+**Live URL:** https://cerebras-perf-ui-three.vercel.app/
 
 A browser tool that turns Cerebras `.xlsx` perf-projection sweeps into an answer two
 audiences can act on:
