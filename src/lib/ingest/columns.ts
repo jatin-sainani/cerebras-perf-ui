@@ -187,7 +187,10 @@ export function normalizeHeader(raw: unknown): string {
   return String(raw)
     .toLowerCase()
     .replace(/\([^)]*\)/g, ' ') // remove parenthetical units e.g. "(ms)"
-    .replace(/\b(t\/s\/user|t\/s|tok\/s|tokens?\/s|ms|milliseconds?|req\/min|rpm)\b/g, ' ')
+    // NB: do not strip "rpm"/"req/min" here — RPM is the canonical name of a
+    // column (header is literally "RPM"), not just a unit suffix. Stripping it
+    // collapsed that header to "" and the column was silently dropped.
+    .replace(/\b(t\/s\/user|t\/s|tok\/s|tokens?\/s|ms|milliseconds?)\b/g, ' ')
     .replace(/[%#]/g, ' ')
     .replace(/[_/\\-]+/g, ' ')
     .replace(/[^a-z0-9 ]/g, ' ')
