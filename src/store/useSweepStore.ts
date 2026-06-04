@@ -101,10 +101,18 @@ export const useSweepStore = create<SweepState>((set, get) => ({
           return parseSweep({ fileName, relPath, buffer });
         }),
       );
-      set((s) => ({
-        sweeps: mergeSweeps(s.sweeps, parsed),
-        sampleLoaded: true,
-      }));
+      set((s) => {
+        const sweeps = mergeSweeps(s.sweeps, parsed);
+        // First load with nothing selected: default to all models on the first
+        // profile, so the side-by-side comparison is meaningful out of the box.
+        let selectedIds = s.selectedIds;
+        if (selectedIds.length === 0) {
+          const ok = sweeps.filter((x) => x.status.level !== 'error');
+          const firstProfile = Math.min(...ok.map((x) => x.profile));
+          selectedIds = ok.filter((x) => x.profile === firstProfile).map((x) => x.id);
+        }
+        return { sweeps, selectedIds, sampleLoaded: true };
+      });
     } finally {
       set({ parsing: false });
     }

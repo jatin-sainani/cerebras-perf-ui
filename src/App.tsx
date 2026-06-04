@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { useShallow } from 'zustand/react/shallow';
 import { useSweepStore, selectedSweeps, type Audience } from './store/useSweepStore';
@@ -8,7 +8,6 @@ import { SweepSelector } from './components/SweepSelector';
 import { CustomerView } from './components/customer/CustomerView';
 import { EngineerView } from './components/engineer/EngineerView';
 import { InsightsView } from './components/insights/InsightsView';
-import { Button } from './components/ui/primitives';
 
 type View = Audience | 'insights';
 
@@ -31,6 +30,12 @@ export default function App() {
   // `audience` holds customer/engineer; we extend it with an "insights" view id.
   const view = audience as View;
   const setView = (v: View) => setAudience(v as Audience);
+
+  // Pre-load the 11 shipped models on first launch so results are visible with
+  // no clicks. Uploading more models still works and merges in.
+  useEffect(() => {
+    if (!sampleLoaded) void loadSamples();
+  }, [sampleLoaded, loadSamples]);
 
   const hasData = allSweeps.length > 0;
   const main = useMemo(() => {
@@ -70,27 +75,18 @@ export default function App() {
         <aside className="w-full shrink-0 lg:w-72">
           <div className="lg:sticky lg:top-5">
             <Dropzone />
-            <div className="mt-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => void loadSamples()}
-                disabled={parsing || sampleLoaded}
-              >
-                {sampleLoaded ? 'Sample data loaded' : 'Load sample data (11 models × 7 profiles)'}
-              </Button>
-            </div>
+            <p className="mt-2 text-[11px] text-ink-400">
+              {parsing && !sampleLoaded
+                ? 'Loading the 11 sample models…'
+                : 'The 11 sample models are pre-loaded. Upload more to compare your own.'}
+            </p>
             <FileStatusList />
             <SweepSelector />
           </div>
         </aside>
 
         <main className="min-w-0 flex-1">
-          {!hasData && view === 'customer' ? (
-            <Welcome onLoad={() => void loadSamples()} parsing={parsing} />
-          ) : (
-            main
-          )}
+          {!hasData ? <Welcome parsing={parsing} /> : main}
         </main>
       </div>
 
@@ -104,20 +100,17 @@ export default function App() {
   );
 }
 
-function Welcome({ onLoad, parsing }: { onLoad: () => void; parsing: boolean }) {
+function Welcome({ parsing }: { parsing: boolean }) {
   return (
     <div className="flex min-h-[360px] flex-col items-center justify-center rounded-xl border border-dashed border-ink-300 bg-white p-10 text-center">
-      <h2 className="text-xl font-semibold text-ink-900">Upload perf sweeps to begin</h2>
+      <h2 className="text-xl font-semibold text-ink-900">
+        {parsing ? 'Loading the sample models…' : 'No sweeps loaded'}
+      </h2>
       <p className="mt-2 max-w-lg text-sm text-ink-500">
-        Drop one or many <code className="rounded bg-ink-100 px-1">.xlsx</code> sweeps (or a whole sweep folder) on the
-        left. Then switch between the <b>Customer</b> go/no-go view, the <b>Engineer</b> sanity-check, and{' '}
-        <b>Insights</b>. Comparing several models at once is the common case.
+        The 11 shipped models load automatically. If you cleared them, drop one or many{' '}
+        <code className="rounded bg-ink-100 px-1">.xlsx</code> sweeps (or a whole sweep folder) on the left to
+        explore the <b>Customer</b>, <b>Engineer</b>, and <b>Insights</b> views.
       </p>
-      <div className="mt-5">
-        <Button variant="primary" onClick={onLoad} disabled={parsing}>
-          {parsing ? 'Loading…' : 'Load sample data to explore'}
-        </Button>
-      </div>
     </div>
   );
 }

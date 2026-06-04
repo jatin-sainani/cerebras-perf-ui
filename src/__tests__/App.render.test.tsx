@@ -35,20 +35,15 @@ afterAll(() => {
 });
 
 describe('App renders and ingests uploads end to end', () => {
-  it('shows welcome, loads samples, and renders a go/no-go verdict', async () => {
+  it('auto-preloads the sample models and renders a go/no-go verdict', async () => {
     render(<App />);
 
-    // 1. Welcome / upload-first state.
-    expect(screen.getByText(/Upload perf sweeps to begin/i)).toBeTruthy();
+    // 1. Sample models pre-load on mount (no click) and appear in the selector.
+    await waitFor(() => expect(screen.getAllByText('Model A').length).toBeGreaterThan(0), {
+      timeout: 12000,
+    });
 
-    // 2. Load the bundled sample sweeps (same path a real upload takes).
-    fireEvent.click(screen.getByText(/Load sample data to explore/i));
-
-    // 3. Sweeps appear in the selector grouped by model.
-    await waitFor(() => expect(screen.getByText('Model A')).toBeTruthy(), { timeout: 5000 });
-
-    // 4. Select everything, then the customer view scores GO/NO-GO.
-    fireEvent.click(screen.getAllByText('All')[0]);
+    // 2. The customer view scores GO/NO-GO on the auto-selected default set.
     await waitFor(() => {
       const verdicts = screen.getAllByText(/^(GO|NO-GO)$/);
       expect(verdicts.length).toBeGreaterThan(0);
@@ -64,5 +59,5 @@ describe('App renders and ingests uploads end to end', () => {
     fireEvent.click(screen.getByText('Insights'));
     await waitFor(() => expect(screen.getByText(/Inferred model size/i)).toBeTruthy());
     expect(screen.getByText(/Traffic profiles/i)).toBeTruthy();
-  });
+  }, 20000);
 });

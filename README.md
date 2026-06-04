@@ -47,9 +47,10 @@ Requirements: **Node ≥ 20** (developed on Node 24). No backend, no env vars, n
 
 ## How to use it
 
-1. **Upload** — drop `.xlsx` sweeps (or a whole `Model_X_profile_N/` folder) onto the
-   panel on the left, or click **Load sample data** to explore the 11 shipped models × 7
-   profiles. Files are parsed locally; nothing is uploaded anywhere.
+1. **It's pre-loaded** — the 11 shipped models × 7 profiles load automatically on launch, so
+   you see results immediately with no clicks. To add your own, drop `.xlsx` sweeps (or a whole
+   `Model_X_profile_N/` folder) onto the panel on the left; they merge in. Files are parsed
+   locally; nothing is uploaded anywhere.
 2. **Select** what to compare — sweeps are grouped by model with per-profile chips. Pick
    one, or many across models/profiles.
 3. **Switch views** — **Customer** (set an SLA → GO/NO-GO + cost ranking), **Engineer**
